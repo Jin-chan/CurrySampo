@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8">
+    <title>画像きりかえ</title>
+    <link rel="stylesheet" href="main.css">
+  </head>
+  <body onload="main()">
+  <img id="gazo"  src="button_nomall.jpg" onmousedown="showImage1()" onmouseup="showImage0()" >
+
+<script>
+
+//画像を配列に格納する
+var img = new Array();
+
+img[0] = new Image();
+img[0].src = "button_nomall.jpg";
+img[1] = new Image();
+img[1].src = "button_push.jpg";
+
+
+
+//画像番号用のグローバル変数
+var cnt=0;
+
+
+//画像切り替え関数
+function showImage0(){
+  document.getElementById("gazo").src=img[0].src;
+}
+function showImage1(){
+  document.getElementById("gazo").src=img[1].src;
+}
+
+</script>
+  </body>
+</html>

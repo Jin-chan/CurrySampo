@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8">
+    <title>所用時間,消費カロリーの計算</title>
+  </head>
+  <body>
+  <script>
+    var length=1000;//距離（m）
+	
+	
+	
+	function cal_time(length){
+	var speed=100;
+	var time=length/speed;
+	return time;
+	}
+	function cal_cal(time){
+	var weigh=60;
+	var cal_per=0.1083;
+	var cal=time*weigh*cal_per;
+	return cal;
+	}
+	
+	time=cal_time(length);
+	cal=Math.round(parseFloat(cal_cal(time)));
+
+	document.write("所要時間は"+time+"分<br>");
+	document.write("消費カロリーは"+cal+"kcal");
+	
+	</script>
+</body>
+</html>

@@ -1,0 +1,70 @@
+<!DOCTYPE HTML>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1, maximum-scale=1">
+    <meta name="Robots" content="index,follow">
+    
+    <title>カレー散歩</title>
+    
+    <link rel="stylesheet" type="text/css" href="./css/input.css" media="screen">
+    
+    
+    <!--ファビコン設置-->
+    <link rel="shortcut icon" href="./img/favicon.ico">     
+    
+  </head>
+  <body>
+    <script src="./js/input.js"></script>
+    <!--ヘッダー-->
+    <header>
+    </header>
+    
+    <!--カテゴリ1-->
+    <article>
+      <section>
+	<form name="info" method="get" onsubmit="return sendMap();">
+	  <table>
+	    <tbody>
+	      <tr>
+		<td>
+		  <p>出発地</p>
+		  <input id="departure" name="departure" tabindex="1" title="現在地" placeholder="現在地">
+		  <!-- TODO: js 後で書く -->
+		  <input class="search" value="現在地取得" type="button" onClick="departureReset()">
+		</td>
+	      </tr>
+	      <tr>
+		<td>
+		  <p>散歩時間</p>
+		  <select id="time" name="time" tabindex="1">
+		    <option value="10">10</option>
+		    <option value="20">20</option>
+		    <option value="30">30</option>
+		    <option value="40">40</option>
+		    <option value="50">50</option>
+		    <option value="60">60</option>
+		    <option value="70">70</option>
+		    <option value="80">80</option>
+		    <option value="90">90</option>
+		    <option value="100">100</option>
+		    <option value="110">110</option>
+		    <option value="120">120</option>
+		  </select>
+		</td>
+	      </tr>
+	    </tbody>
+	  </table>
+	  
+	  
+	  
+	  <button  type="submit" tabindex="3" style="position: absolute; top: 400px;">
+	    <IMG class="button" alt="search button" style="width: 100%" src="./img/button_sanpo.png"  onmousedown="showImage1()" onmouseup="showImage0()">
+	  </button>
+	</form>
+      </section>
+    </article>
+<fotter style="position: absolute; top: 550px">Created by チーム カレー散歩</fotter>
+    <!-- ▲カテゴリ1▲ -->
+  </body>
+</html>

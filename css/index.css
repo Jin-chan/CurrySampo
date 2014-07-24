@@ -1,0 +1,6 @@
+#curry img {
+	-webkit-animation-name: rotateArea;
+	-webkit-animation-delay: 0.5s;
+	-webkit-animation-duration: 5s;
+	-webkit-animation-iteration-count: infinite;
+}

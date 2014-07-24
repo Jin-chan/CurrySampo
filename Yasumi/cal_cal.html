@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8">
+    <title>消費カロリーの計算</title>
+  </head>
+  <body>
+  <script>
+    var time=10;//時間（分）
+	
+	var weigh=60;
+	var cal_per=0.0534;
+	var coef=0.87;
+	var cal=0;
+	
+	function cal_cal(time,weigh,cal_per,coef){
+	var cal=time*weigh*cal_per*coef;
+	return cal;
+	}
+	cal=Math.round(parseFloat(cal_cal(time,weigh,cal_per,coef)));
+	document.write(cal+"kcal");
+	
+	</script>
+</body>
+</html>
