@@ -7,7 +7,7 @@ function sendMap() {
 	if (document.info.departure.value!="")
 			departure = escape(document.info.departure.value);
 	else { // TODO: 現在地取得(ここでやった方がいいのか微妙)
-		departure = escape("テレコムセンタービル");
+		departure = escape("表参道");
 	}
 	location.href = "./map.html?"+"dep="+departure+"&time="+document.info.time.value;
 	return false;
