@@ -95,23 +95,6 @@ function render(){
 
 /* ルート算出 */
 function calcRoute(startSpot,endSpot){
-    // witch($("#mode").val()){
-    // case "driving":
-    //     mode=google.maps.DirectionsTravelMode.DRIVING;
-    //     break;
-    // case "bicycling":
-    //     mode=google.maps.DirectionsTravelMode.BICYCLING;
-    //     break;
-    // case "transit":
-    //     mode=google.maps.DirectionsTravelMode.TRANSIT;
-    //     break;
-    // case "walking":
-    //     mode=google.maps.DirectionsTravelMode.WALKING;
-    //     break;
-    // }
-//    dbg(startSpot);
-//    dbg(endSpot);
-//    dbg(mode);
     if(!renderFLG) render();
 
     var request={
