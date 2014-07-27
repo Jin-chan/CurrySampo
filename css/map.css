@@ -7,6 +7,20 @@ body {
     margin: 0px;
     padding: 0px
 }
-#map {
-    height: 100%
+#map_canvas {
+    height: 100%;
+    width: 100%;
+}
+#currymeter{ 
+    position: absolute;
+    height: auto;
+    width: 120px;
+    bottom: 85px;
+    right: 0px;
+}
+
+player{  
+    position: absolute;
+    bottom: 0px;
+    right: 0px;
 }
