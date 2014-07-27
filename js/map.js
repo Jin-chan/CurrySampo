@@ -37,6 +37,15 @@ var shoplist;
 
 param=splitParam();
 var startSpot=unescape(param['dep']);
+var walkingTime = param['time'];
+console.log("log:startSpot = " + startSpot);
+console.log("log:walkingTime = " + walkingTime);
+
+//ジオコードオブジェクト
+var geocoder = new google.maps.Geocoder();
+
+
+
 
 
 function initialize() {
@@ -48,6 +57,22 @@ function initialize() {
 
     /* 地図オブジェクト生成 */
     map=new google.maps.Map(document.getElementById("map_canvas"), mapOptions);
+    geocoder.geocode(
+	{
+	    'address': startSpot,
+	    'region': 'jp'
+	},
+	function(results, status){
+	    if(status==google.maps.GeocoderStatus.OK){
+    		//処理
+		map.setCenter(results[0].geometry.location);
+		console.log(results[0].geometry.location);
+	    }
+	}
+    );
+
+
+
 
     geo = new google.maps.Geocoder();
 //    var hoge = geo.geocode(startSpothoge, geoResultCallback);
@@ -63,7 +88,7 @@ function initialize() {
     service.textSearch(request, callbackShop);
     
 
-    dbg(endSpot);
+//    dbg(endSpot);
     if(!renderFLG) render();
     //    calcRoute(startSpot,endSpot);
 }
@@ -133,7 +158,7 @@ function callbackShop(results, status) {
 
     if (status == google.maps.places.PlacesServiceStatus.OK) {
 	var shopnum  =  Math.floor(Math.random() * results.length);
-	dbg(shopnum);
+//	dbg(shopnum);
 	// for (var i = 0; i < results.length; i++) {
 	//         console.log(results[i]);
 	//     place = results[i];
@@ -141,7 +166,7 @@ function callbackShop(results, status) {
 	// }
 //	createMarker(results[shopnum]);
     }
-    console.log(results[shopnum].geometry.location);
+//    console.log(results[shopnum].geometry.location);
 //    endSpot = results[shopnum].geometry.location;
     endSpot = results[shopnum];
     calcRoute(startSpot,endSpot);
@@ -266,21 +291,34 @@ function computeTotalDistance(result)
     {
 	total += myroute.legs[i].distance.value;
     }
-    total = total / 1000.
-	console.log(total + "km");
+    total = total / 1000;
+    console.log("Log:computeTotalDistance(result): total distance=" + total + "km");
     
     time=cal_time(total);
     cal=Math.round(parseFloat(cal_cal(time)));
     
     // カレーメーターをリセットしてからカロリー分のカレー画像を div に入れてる
-    var curryMeter = document.getElementById("curry");
+    var curryMeter = document.getElementById("currymeter");
     while (curryMeter.firstChild)
 	curryMeter.removeChild(curryMeter.firstChild);
-    console.log(cal);
+    console.log("Log:computeTotalDistance(result): cal=" + cal);
+
+    var element = document.createElement('img');
+    element.src = "./img/icon.png";
+
+    big_meter =  Math.floor(cal / 100);
+    cal = cal % 100;
+//    console.log(big_meter);
     for(i=0; i<cal; i+=10) {
 	var element = document.createElement('img');
-  	element.src = "./img/icon.png";
+	element.src = "./img/icon.png";
 	element.style.width="50px";		// カレーの大きさ変えたいときはここ直してね
+	curryMeter.appendChild(element);
+    }
+    for (i = 0 ; i <= big_meter ; i++){ 
+	var element = document.createElement('img');
+	element.src = "./img/icon.png";
+	element.style.width="100px";		// カレーの大きさ変えたいときはここ直してね
 	curryMeter.appendChild(element);
     }
     document.write("所要時間は"+time+"分<br>");
