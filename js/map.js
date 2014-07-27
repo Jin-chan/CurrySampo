@@ -1,21 +1,161 @@
 var map;
 var param;
-function initialize() {
-    var mapOptions = {
-        center: new google.maps.LatLng(-34.397, 150.644),
-        zoom: 15,
-        mapTypeId: google.maps.MapTypeId.ROADMAP
-    };
-    map = new google.maps.Map(document.getElementById("map_canvas"),
-			      mapOptions);
-    geo = new google.maps.Geocoder();
+var mode=google.maps.DirectionsTravelMode.WALKING;
+// var travelmode=walking;
+var renderFLG=false;
+var directionsDisplay;
+var directionsService=new google.maps.DirectionsService();
+var currentDirections=null;
 
-    param = splitParam();
-    var req = {
-        address: unescape(param['dep']),
+var startSpot="東京駅";
+var startSpothoge={address: "目黒"};
+var endSpot="六本木ヒルズ";
+
+// made by matsui
+var infowindow;
+var shoplist;
+
+// function initialize() {
+//     var mapOptions = {
+//         center: new google.maps.LatLng(-34.397, 150.644),
+//         zoom: 15,
+//         mapTypeId: google.maps.MapTypeId.ROADMAP
+//     };
+//     map = new google.maps.Map(document.getElementById("map_canvas"), mapOptions);
+//     geo = new google.maps.Geocoder();
+
+//     param = splitParam();
+//     var req = {
+//         address: unescape(param['dep']),
+//     };
+//     //    geo.geocode(req, geoResultCallback);
+//     //    geo.geocode(startSpot, geoResultCallback);
+    
+//     calcRoute(startSpot,endSpot);
+
+// }
+
+param=splitParam();
+var startSpot=unescape(param['dep']);
+
+function initialize() {
+    var mapOptions={
+        zoom:12,
+        center: new google.maps.LatLng(35.670236,139.749832),//虎の門
+
+        mapTypeId: google.maps.MapTypeId.ROADMAP
+    }
+
+    /* 地図オブジェクト生成 */
+    map=new google.maps.Map(document.getElementById("map_canvas"), mapOptions);
+
+    geo = new google.maps.Geocoder();
+    var hoge = geo.geocode(startSpothoge, geoResultCallback);
+    console.log("map :");
+    console.log(map.center);
+    var request = {
+    	location: map.center,
+     	radius: 500,
+	query: 'カレー'
     };
-    geo.geocode(req, geoResultCallback);
+
+    infowindow = new google.maps.InfoWindow();
+    var service = new google.maps.places.PlacesService(map);
+    shoplist = service.textSearch(request, callbackShop);
+
+    if(!renderFLG) render();
+    calcRoute(startSpot,endSpot);
 }
+
+/* ルート検索結果を描画 */
+function render(){
+//    dbg("render:"+renderFLG);
+    renderFLG=true;
+    /* ルートをレンダリング */
+    directionsDisplay=new google.maps.DirectionsRenderer({
+        "map": map,
+        "preserveViewport": true,
+        "draggable": true
+    });
+
+    /* 出発地点・到着地点マーカーが移動された時 */
+    google.maps.event.addListener(directionsDisplay, 'directions_changed',function() {
+        currentDirections=directionsDisplay.getDirections();
+        var route=currentDirections.routes[0];
+        var s="";
+        for(var i=0; i<route.legs.length; i++) {
+            var routeSegment=i+1;
+            s+=route.legs[i].start_address+'to';
+            s+=route.legs[i].end_address+'\n';
+            s+=route.legs[i].distance.text;
+        }
+//        dbg("directions_changed:"+s);
+    });
+}
+
+/* ルート算出 */
+function calcRoute(startSpot,endSpot){
+    // witch($("#mode").val()){
+    // case "driving":
+    //     mode=google.maps.DirectionsTravelMode.DRIVING;
+    //     break;
+    // case "bicycling":
+    //     mode=google.maps.DirectionsTravelMode.BICYCLING;
+    //     break;
+    // case "transit":
+    //     mode=google.maps.DirectionsTravelMode.TRANSIT;
+    //     break;
+    // case "walking":
+    //     mode=google.maps.DirectionsTravelMode.WALKING;
+    //     break;
+    // }
+//    dbg(startSpot);
+//    dbg(endSpot);
+//    dbg(mode);
+    if(!renderFLG) render();
+
+    var request={
+        origin:startSpot,            /* 出発地点 */
+        destination:endSpot,        /* 到着地点 */
+	travelMode:mode                /* 交通手段 */
+    };
+    /* ルート描画 */
+    directionsService.route(request, function(response, status) {
+        if (status==google.maps.DirectionsStatus.OK) {
+            dbg(response);
+            directionsDisplay.setDirections(response);
+        }else{
+            dbg("status:"+status);
+        }
+    });
+}
+
+// ▼ カレー店の情報を検索表示 ＝＝＝＝＝＝＝＝＝＝＝＝
+function callbackShop(results, status) {
+  if (status == google.maps.places.PlacesServiceStatus.OK) {
+    for (var i = 0; i < results.length; i++) {
+      var place = results[i];
+      createMarker(results[i]);
+    }
+  }
+}
+
+function createMarker(place) {
+  var placeLoc = place.geometry.location;
+  var marker = new google.maps.Marker({
+    map: map,
+    position: place.geometry.location
+  });
+
+  google.maps.event.addListener(marker, 'click', function() {
+    infowindow.setContent(place.name);
+    infowindow.open(map, this);
+  });
+}
+
+google.maps.event.addDomListener(window, 'load', initialize);
+// ▲ ＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝
+
 //◆総距離合計
 function computeTotalDistance(result) {
     var total = 0;
@@ -35,17 +175,17 @@ function geoResultCallback(result, status) {
     var latlng = result[0].geometry.location;
     param['latlng'] = result[0].geometry.location;
     map.setCenter(latlng);
-		/*  現在地のピン
-    var marker = new google.maps.Marker({
+    /*  現在地のピン
+	var marker = new google.maps.Marker({
         position: latlng,
         map: map,
         title: latlng.toString(),
         draggable: true
-    });
+	});
 
-    google.maps.event.addListener(marker, 'dragend', function (event) {
+	google.maps.event.addListener(marker, 'dragend', function (event) {
         marker.setTitle(event.latLng.toString());
-    });
+	});
     */
     
     //Place情報取得	
@@ -54,14 +194,12 @@ function geoResultCallback(result, status) {
 	radius: '500',
 	query: 'カレー'
     };
-
     service = new google.maps.places.PlacesService(map);
     service.textSearch(request, callback);
 }
 
 //ここでplaceにカレー屋さん情報を入れる
-function callback(results, status) {
-    
+function callback( results, status) {
     var place = [];
     if (status == google.maps.places.PlacesServiceStatus.OK) {
 	for (var i = 0; i < results.length; i++) {
@@ -91,24 +229,21 @@ function callback(results, status) {
 	{
 	    draggable: true,
 	    preserveViewport:false,
-			suppressMarkers: true
+	    suppressMarkers: true
 	};
     var directionsDisplay = new google.maps.DirectionsRenderer(rendererOptions);
-		directionsDisplay.suppressMarkers = true;
+    directionsDisplay.suppressMarkers = true;
     directionsDisplay.setMap(map);
     
-    directionsService.route(request, function(response, status)
-			    {
-				if (status == google.maps.DirectionsStatus.OK)
-				{
-				    directionsDisplay.setDirections(response);
-				}
-			    });
+    directionsService.route(request, function(response, status){
+	if (status == google.maps.DirectionsStatus.OK){
+	    directionsDisplay.setDirections(response);
+	}
+    });
     
-    google.maps.event.addListener(directionsDisplay, "directions_changed", function()
-				  {
-				      computeTotalDistance(directionsDisplay.directions);　//◆総距離合計
-				  });
+    google.maps.event.addListener(directionsDisplay, "directions_changed", function(){
+	computeTotalDistance(directionsDisplay.directions);　//◆総距離合計
+    });
 }
 
 //カレーの距離計算関数
@@ -152,4 +287,22 @@ function cal_cal(time){
     var cal_per=0.1083;
     var cal=time*weigh*cal_per*1000;
     return cal;
+}
+
+var dbg=function(str){
+    try{
+        if(window.console && console.log){
+            console.log(str);
+        }
+    }catch(err){
+        //alert("error:"+err);
+    }
+}
+
+function printProperties(obj) {
+    var properties = '';
+    for (var prop in obj){
+        properties += prop + "=" + obj[prop] + "\n";
+    }
+    alert(properties);
 }
