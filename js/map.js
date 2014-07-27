@@ -38,6 +38,7 @@ var shoplist;
 param=splitParam();
 var startSpot=unescape(param['dep']);
 
+
 function initialize() {
     var mapOptions={
         zoom:12,
@@ -62,6 +63,7 @@ function initialize() {
     infowindow = new google.maps.InfoWindow();
     var service = new google.maps.places.PlacesService(map);
     shoplist = service.textSearch(request, callbackShop);
+    
 
     if(!renderFLG) render();
     calcRoute(startSpot,endSpot);
@@ -105,22 +107,24 @@ function calcRoute(startSpot,endSpot){
     /* ルート描画 */
     directionsService.route(request, function(response, status) {
         if (status==google.maps.DirectionsStatus.OK) {
-            dbg(response);
+//            dbg(response);
             directionsDisplay.setDirections(response);
         }else{
-            dbg("status:"+status);
+//            dbg("status:"+status);
         }
     });
 }
 
 // ▼ カレー店の情報を検索表示 ＝＝＝＝＝＝＝＝＝＝＝＝
+var place;
 function callbackShop(results, status) {
-  if (status == google.maps.places.PlacesServiceStatus.OK) {
-    for (var i = 0; i < results.length; i++) {
-      var place = results[i];
-      createMarker(results[i]);
+    if (status == google.maps.places.PlacesServiceStatus.OK) {
+	for (var i = 0; i < results.length; i++) {
+	    place = results[i];
+	    createMarker(results[i]);
+	}
     }
-  }
+    console.log(place);
 }
 
 function createMarker(place) {
@@ -272,15 +276,15 @@ function cal_cal(time){
     return cal;
 }
 
-var dbg=function(str){
-    try{
-        if(window.console && console.log){
-            console.log(str);
-        }
-    }catch(err){
-        //alert("error:"+err);
-    }
-}
+// var dbg=function(str){
+//     try{
+//         if(window.console && console.log){
+//             console.log(str);
+//         }
+//     }catch(err){
+//         //alert("error:"+err);
+//     }
+// }
 
 function printProperties(obj) {
     var properties = '';
