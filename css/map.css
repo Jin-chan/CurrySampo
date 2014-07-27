@@ -19,7 +19,16 @@ body {
     right: 0px;
 }
 
-player{  
+#detail{ 
+    position: absolute;
+    height: 100px;
+    width: 200px;
+    bottom: 0px;
+    right: 120px;
+    background-color: #fff;
+}
+
+#player{  
     position: absolute;
     bottom: 0px;
     right: 0px;
