@@ -30,7 +30,7 @@ var shoplist;
 //     };
 //     //    geo.geocode(req, geoResultCallback);
 //     //    geo.geocode(startSpot, geoResultCallback);
-    
+
 //     calcRoute(startSpot,endSpot);
 
 // }
@@ -43,7 +43,6 @@ function initialize() {
     var mapOptions={
         zoom:13,
         center: new google.maps.LatLng(35.670236,139.749832),//虎の門
-
         mapTypeId: google.maps.MapTypeId.ROADMAP
     }
 
@@ -67,12 +66,12 @@ function initialize() {
 
     dbg(endSpot);
     if(!renderFLG) render();
-//    calcRoute(startSpot,endSpot);
+    //    calcRoute(startSpot,endSpot);
 }
 
 /* ルート検索結果を描画 */
 function render(){
-//    dbg("render:"+renderFLG);
+    //    dbg("render:"+renderFLG);
     renderFLG=true;
     /* ルートをレンダリング */
     directionsDisplay=new google.maps.DirectionsRenderer({
@@ -92,7 +91,7 @@ function render(){
             s+=route.legs[i].end_address+'\n';
             s+=route.legs[i].distance.text;
         }
-//        dbg("directions_changed:"+s);
+	//        dbg("directions_changed:"+s);
     });
 }
 
@@ -108,10 +107,10 @@ function calcRoute(startSpot,endSpot){
     /* ルート描画 */
     directionsService.route(request, function(response, status) {
         if (status==google.maps.DirectionsStatus.OK) {
-//            dbg(response);
+	    //            dbg(response);
             directionsDisplay.setDirections(response);
         }else{
-//            dbg("status:"+status);
+	    //            dbg("status:"+status);
         }
     });
 }
@@ -136,16 +135,16 @@ function callbackShop(results, status) {
 }
 
 function createMarker(place) {
-  var placeLoc = place.geometry.location;
-  var marker = new google.maps.Marker({
-    map: map,
-    position: place.geometry.location
-  });
+    var placeLoc = place.geometry.location;
+    var marker = new google.maps.Marker({
+	map: map,
+	position: place.geometry.location
+    });
 
-  google.maps.event.addListener(marker, 'click', function() {
-    infowindow.setContent(place.name);
-    infowindow.open(map, this);
-  });
+    google.maps.event.addListener(marker, 'click', function() {
+	infowindow.setContent(place.name);
+	infowindow.open(map, this);
+    });
 }
 
 //google.maps.event.addDomListener(window, 'load', initialize);
