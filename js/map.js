@@ -41,7 +41,7 @@ var startSpot=unescape(param['dep']);
 
 function initialize() {
     var mapOptions={
-        zoom:12,
+        zoom:13,
         center: new google.maps.LatLng(35.670236,139.749832),//虎の門
 
         mapTypeId: google.maps.MapTypeId.ROADMAP
@@ -62,11 +62,12 @@ function initialize() {
 
     infowindow = new google.maps.InfoWindow();
     var service = new google.maps.places.PlacesService(map);
-    shoplist = service.textSearch(request, callbackShop);
+    service.textSearch(request, callbackShop);
     
 
+    dbg(endSpot);
     if(!renderFLG) render();
-    calcRoute(startSpot,endSpot);
+//    calcRoute(startSpot,endSpot);
 }
 
 /* ルート検索結果を描画 */
@@ -118,13 +119,20 @@ function calcRoute(startSpot,endSpot){
 // ▼ カレー店の情報を検索表示 ＝＝＝＝＝＝＝＝＝＝＝＝
 var place;
 function callbackShop(results, status) {
+
     if (status == google.maps.places.PlacesServiceStatus.OK) {
-	for (var i = 0; i < results.length; i++) {
-	    place = results[i];
-	    createMarker(results[i]);
-	}
+	var shopnum  =  Math.floor(Math.random() * results.length);
+	dbg(shopnum);
+	// for (var i = 0; i < results.length; i++) {
+	//         console.log(results[i]);
+	//     place = results[i];
+	//     createMarker(results[i]);
+	// }
+	createMarker(results[shopnum]);
     }
-    console.log(place);
+    console.log(results[shopnum].geometry.location);
+    endSpot = results[shopnum].geometry.location;
+    calcRoute(startSpot,endSpot);
 }
 
 function createMarker(place) {
@@ -276,15 +284,15 @@ function cal_cal(time){
     return cal;
 }
 
-// var dbg=function(str){
-//     try{
-//         if(window.console && console.log){
-//             console.log(str);
-//         }
-//     }catch(err){
-//         //alert("error:"+err);
-//     }
-// }
+var dbg=function(str){
+    try{
+        if(window.console && console.log){
+            console.log(str);
+        }
+    }catch(err){
+        alert("error:"+err);
+    }
+}
 
 function printProperties(obj) {
     var properties = '';
