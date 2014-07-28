@@ -7,8 +7,6 @@ var directionsDisplay;
 var directionsService=new google.maps.DirectionsService();
 var currentDirections=null;
 
-var startSpot="東京駅";
-var startSpothoge={address: "目黒"};
 var endSpot="六本木ヒルズ";
 
 // made by matsui
@@ -35,6 +33,7 @@ var shoplist;
 
 // }
 
+// 出発地を取得
 param=splitParam();
 var startSpot=unescape(param['dep']);
 
@@ -51,9 +50,7 @@ function initialize() {
     map=new google.maps.Map(document.getElementById("map_canvas"), mapOptions);
 
     geo = new google.maps.Geocoder();
-    var hoge = geo.geocode(startSpothoge, geoResultCallback);
-    console.log("map :");
-    console.log(map.center);
+    console.log("Log;map.center = " + map.center);
     var request = {
     	location: map.center,
      	radius: 500,
@@ -107,10 +104,10 @@ function calcRoute(startSpot,endSpot){
     /* ルート描画 */
     directionsService.route(request, function(response, status) {
         if (status==google.maps.DirectionsStatus.OK) {
-//            dbg(response);
+            cosole.log(response);
             directionsDisplay.setDirections(response);
         }else{
-//            dbg("status:"+status);
+	    console.log("Log:google.maps.DirectionsStatus="+status);
         }
     });
 }
