@@ -136,7 +136,7 @@ function calcRoute(startSpot,endSpot){
     /* ルート描画 */
     directionsService.route(request, function(response, status) {
         if (status==google.maps.DirectionsStatus.OK) {
-            cosole.log(response);
+            console.log(response);
             directionsDisplay.setDirections(response);
         }else{
 	    console.log("Log:google.maps.DirectionsStatus="+status);
