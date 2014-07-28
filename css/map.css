@@ -22,10 +22,13 @@ body {
 #detail{ 
     position: absolute;
     height: 100px;
-    width: 200px;
+    width: 250px;
     bottom: 0px;
-    right: 120px;
-    background-color: #fff;
+    left: 0px;
+    background-color: #deb887;
+    opacity: 0.8;
+    border-radius: 10px;
+    padding: 10px;
 }
 
 #player{  

@@ -48,7 +48,7 @@ console.log("log:walkdistance = " + walkdistance);
 
 function initialize() {
     var mapOptions={
-        zoom:13,
+        zoom:15,
         center: new google.maps.LatLng(35.670236,139.749832),//虎の門
         mapTypeId: google.maps.MapTypeId.ROADMAP
     }
@@ -142,6 +142,13 @@ function calcRoute(startSpot,endSpot){
 	    console.log("Log:google.maps.DirectionsStatus="+status);
         }
     });
+   
+    //お店情報の表示
+    console.log(endSpot.name);
+ 　 var info = document.getElementById('shop');
+ 　 var textNode = document.createTextNode(endSpot.name);
+    info.appendChild(textNode);
+    
 
     // 目的地の店情報を表示するためのイベント
     // console.log("店情報を表示したい");
@@ -202,7 +209,14 @@ function computeTotalDistance(result)
     }
     total = total / 1000;
     console.log("Log:computeTotalDistance(result): total distance=" + total + "km");
-    
+
+
+    //散歩時間の表示
+    sanpoTime = Math.floor(total*1000/80);
+    var info = document.getElementById('sanpotime');
+    var textNode = document.createTextNode(sanpoTime);
+    info.appendChild(textNode);
+
     time=cal_time(total);
     cal=Math.round(parseFloat(cal_cal(time)));
     
