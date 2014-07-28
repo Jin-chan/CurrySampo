@@ -12,7 +12,7 @@ var endSpot="六本木ヒルズ";
 // made by matsui
 var infowindow;
 var shoplist;
-
+var startSpotLatLng;
 // function initialize() {
 //     var mapOptions = {
 //         center: new google.maps.LatLng(-34.397, 150.644),
@@ -28,7 +28,7 @@ var shoplist;
 //     };
 //     //    geo.geocode(req, geoResultCallback);
 //     //    geo.geocode(startSpot, geoResultCallback);
-    
+
 //     calcRoute(startSpot,endSpot);
 
 // }
@@ -36,19 +36,46 @@ var shoplist;
 // 出発地を取得
 param=splitParam();
 var startSpot=unescape(param['dep']);
+var walkingTime = param['time'];
+console.log("log:startSpot = " + startSpot);
+console.log("log:walkingTime = " + walkingTime);
+var walkdistance = 80 * walkingTime;
+console.log("log:walkdistance = " + walkdistance);
+
+
+
 
 
 function initialize() {
     var mapOptions={
-        zoom:12,
+        zoom:13,
         center: new google.maps.LatLng(35.670236,139.749832),//虎の門
-
         mapTypeId: google.maps.MapTypeId.ROADMAP
     }
 
     /* 地図オブジェクト生成 */
     map=new google.maps.Map(document.getElementById("map_canvas"), mapOptions);
+    //ジオコードオブジェクト
+    var geocoder = new google.maps.Geocoder();
+    geocoder.geocode(
+	{
+	    'address': startSpot,
+	    'region': 'jp'
+	},
+	function(results, status){
+	    if(status==google.maps.GeocoderStatus.OK){
+    		//処理
+		startSpotLatLng  =  results[0].geometry.location;
+		console.log(startSpotLatLng);
+		map.setCenter(startSpotLatLng);
+		console.log("Log:map.setCenter to " + results[0].geometry.location);
+		var request = {
+    		    location: map.center,
+     		    radius: walkdistance,
+		    query: 'カレー'
+		};
 
+<<<<<<< HEAD
     geo = new google.maps.Geocoder();
     console.log("Log;map.center = " + map.center);
     var request = {
@@ -56,19 +83,29 @@ function initialize() {
      	radius: 500,
 	query: 'カレー'
     };
+=======
+		infowindow = new google.maps.InfoWindow();
+>>>>>>> FETCH_HEAD
 
-    infowindow = new google.maps.InfoWindow();
-    var service = new google.maps.places.PlacesService(map);
-    shoplist = service.textSearch(request, callbackShop);
-    
+		var service = new google.maps.places.PlacesService(map);
+		service.textSearch(request, callbackShop);
+	    }
+	}
+    );
+
+
+
+
+    geo = new google.maps.Geocoder();
+    console.log("Log:map.center = " + map.center);
+    console.log(startSpotLatLng);
 
     if(!renderFLG) render();
-    calcRoute(startSpot,endSpot);
 }
 
 /* ルート検索結果を描画 */
 function render(){
-//    dbg("render:"+renderFLG);
+    //    dbg("render:"+renderFLG);
     renderFLG=true;
     /* ルートをレンダリング */
     directionsDisplay=new google.maps.DirectionsRenderer({
@@ -88,7 +125,7 @@ function render(){
             s+=route.legs[i].end_address+'\n';
             s+=route.legs[i].distance.text;
         }
-//        dbg("directions_changed:"+s);
+	//        dbg("directions_changed:"+s);
     });
 }
 
@@ -98,135 +135,71 @@ function calcRoute(startSpot,endSpot){
 
     var request={
         origin:startSpot,            /* 出発地点 */
-        destination:endSpot,        /* 到着地点 */
+        destination:endSpot.geometry.location,        /* 到着地点 */
 	travelMode:mode                /* 交通手段 */
     };
     /* ルート描画 */
     directionsService.route(request, function(response, status) {
         if (status==google.maps.DirectionsStatus.OK) {
+<<<<<<< HEAD
             cosole.log(response);
             directionsDisplay.setDirections(response);
         }else{
 	    console.log("Log:google.maps.DirectionsStatus="+status);
+=======
+    	    //            dbg(response);
+            directionsDisplay.setDirections(response);
+        }else{
+    	    //            dbg("status:"+status);
+>>>>>>> FETCH_HEAD
         }
     });
+
+    // 目的地の店情報を表示するためのイベント
+    // console.log("店情報を表示したい");
+    // console.log(endSpot);
+    // var marker = new google.maps.Marker({
+    // 	map: map,
+    // 	position: endSpot.geometry.location
+    // });
+    // google.maps.event.addListener(marker, 'click', function() {
+    // 	infowindow.setContent(endSpot.name);
+    // 	infowindow.open(map, this);
+    // });
+
 }
 
 // ▼ カレー店の情報を検索表示 ＝＝＝＝＝＝＝＝＝＝＝＝
 var place;
 function callbackShop(results, status) {
+
     if (status == google.maps.places.PlacesServiceStatus.OK) {
-	for (var i = 0; i < results.length; i++) {
-	    place = results[i];
-	    createMarker(results[i]);
-	}
+	var shopnum  =  Math.floor(Math.random() * results.length);
+//	dbg(shopnum);
+	// for (var i = 0; i < results.length; i++) {
+	//     place = results[i];
+	//     createMarker(results[i]);
+	// }
+//	createMarker(results[shopnum]);
+
+    endSpot = results[shopnum];
+    calcRoute(startSpot,endSpot);
     }
-    console.log(place);
+    google.maps.event.addListener(directionsDisplay, "directions_changed", function(){
+	computeTotalDistance(directionsDisplay.directions);　//◆総距離合計
+    });
 }
 
 function createMarker(place) {
-  var placeLoc = place.geometry.location;
-  var marker = new google.maps.Marker({
-    map: map,
-    position: place.geometry.location
-  });
-
-  google.maps.event.addListener(marker, 'click', function() {
-    infowindow.setContent(place.name);
-    infowindow.open(map, this);
-  });
-}
-
-//google.maps.event.addDomListener(window, 'load', initialize);
-// ▲ ＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝
-
-//◆総距離合計
-function computeTotalDistance(result) {
-    var total = 0;
-    var myroute = result.routes[0];
-    for (i = 0; i < myroute.legs.length; i++) {
-        total += myroute.legs[i].distance.value;
-    }
-    total = total / 1000.
-        console.log(total + "km");
-}
-
-function geoResultCallback(result, status) {
-    if (status != google.maps.GeocoderStatus.OK) {
-        alert(status);
-        return;
-    }
-    var latlng = result[0].geometry.location;
-    param['latlng'] = result[0].geometry.location;
-    map.setCenter(latlng);
-    /*  現在地のピン
-	var marker = new google.maps.Marker({
-        position: latlng,
-        map: map,
-        title: latlng.toString(),
-        draggable: true
-	});
-
-	google.maps.event.addListener(marker, 'dragend', function (event) {
-        marker.setTitle(event.latLng.toString());
-	});
-    */
-    
-    //Place情報取得	
-    var request = {
-	location: latlng,
-	radius: '500',
-	query: 'カレー'
-    };
-    service = new google.maps.places.PlacesService(map);
-    service.textSearch(request, callback);
-}
-
-//ここでplaceにカレー屋さん情報を入れる
-function callback( results, status) {
-    var place = [];
-    if (status == google.maps.places.PlacesServiceStatus.OK) {
-	for (var i = 0; i < results.length; i++) {
-	    place[i] = results[i];
-	}
-    }
-    
-    var directionsService = new google.maps.DirectionsService();
-    
-    var curryPlace = new google.maps.LatLng(place[0].geometry.location.ob,place[0].geometry.location.pb);
-    
-    iconChange(param['latlng'], curryPlace, map);
-    
-    var request =
-	{
-	    origin: param['latlng'],
-	    destination: curryPlace,
-	    
-	    travelMode: google.maps.DirectionsTravelMode.WALKING,//ドライビングモード指定（車）
-	    unitSystem: google.maps.DirectionsUnitSystem.METRIC,//単位km表示
-	    optimizeWaypoints: true,//最適化された最短距離にする。
-	    avoidHighways: false,//trueで高速道路を使用しない
-	    avoidTolls: false //trueで有料道路を使用しない
-	};
-    
-    var rendererOptions =
-	{
-	    draggable: true,
-	    preserveViewport:false,
-	    suppressMarkers: true
-	};
-    var directionsDisplay = new google.maps.DirectionsRenderer(rendererOptions);
-    directionsDisplay.suppressMarkers = true;
-    directionsDisplay.setMap(map);
-    
-    directionsService.route(request, function(response, status){
-	if (status == google.maps.DirectionsStatus.OK){
-	    directionsDisplay.setDirections(response);
-	}
+    var placeLoc = place.geometry.location;
+    var marker = new google.maps.Marker({
+	map: map,
+	position: place.geometry.location
     });
-    
-    google.maps.event.addListener(directionsDisplay, "directions_changed", function(){
-	computeTotalDistance(directionsDisplay.directions);　//◆総距離合計
+
+    google.maps.event.addListener(marker, 'click', function() {
+	infowindow.setContent(place.name);
+	infowindow.open(map, this);
     });
 }
 
@@ -239,21 +212,33 @@ function computeTotalDistance(result)
     {
 	total += myroute.legs[i].distance.value;
     }
-    total = total / 1000.
-	console.log(total + "km");
+    total = total / 1000;
+    console.log("Log:computeTotalDistance(result): total distance=" + total + "km");
     
     time=cal_time(total);
     cal=Math.round(parseFloat(cal_cal(time)));
     
     // カレーメーターをリセットしてからカロリー分のカレー画像を div に入れてる
-    var curryMeter = document.getElementById("curry");
+    var curryMeter = document.getElementById("currymeter");
     while (curryMeter.firstChild)
 	curryMeter.removeChild(curryMeter.firstChild);
-    console.log(cal);
+    console.log("Log:computeTotalDistance(result): cal=" + cal);
+
+    var element = document.createElement('img');
+    element.src = "./img/icon.png";
+
+    big_meter =  Math.floor(cal / 100);
+    cal = cal % 100;
     for(i=0; i<cal; i+=10) {
 	var element = document.createElement('img');
-  	element.src = "./img/icon.png";
+	element.src = "./img/icon.png";
 	element.style.width="50px";		// カレーの大きさ変えたいときはここ直してね
+	curryMeter.appendChild(element);
+    }
+    for (i = 0 ; i <= big_meter ; i++){ 
+	var element = document.createElement('img');
+	element.src = "./img/icon.png";
+	element.style.width="100px";		// カレーの大きさ変えたいときはここ直してね
 	curryMeter.appendChild(element);
     }
     document.write("所要時間は"+time+"分<br>");
@@ -266,6 +251,7 @@ function cal_time(length){
     var time=length/speed;
     return time;
 }
+
 function cal_cal(time){
     var weigh=60;
     var cal_per=0.1083;
@@ -273,16 +259,16 @@ function cal_cal(time){
     return cal;
 }
 
-// var dbg=function(str){
-//     try{
-//         if(window.console && console.log){
-//             console.log(str);
-//         }
-//     }catch(err){
-//         //alert("error:"+err);
-//     }
-// }
-
+// デバッグ用関数
+var dbg=function(str){
+    try{
+        if(window.console && console.log){
+            console.log(str);
+        }
+    }catch(err){
+        alert("error:"+err);
+    }
+}
 function printProperties(obj) {
     var properties = '';
     for (var prop in obj){
@@ -290,3 +276,4 @@ function printProperties(obj) {
     }
     alert(properties);
 }
+
