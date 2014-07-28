@@ -75,18 +75,13 @@ function initialize() {
 		    query: 'カレー'
 		};
 
-<<<<<<< HEAD
-    geo = new google.maps.Geocoder();
-    console.log("Log;map.center = " + map.center);
-    var request = {
-    	location: map.center,
-     	radius: 500,
-	query: 'カレー'
-    };
-=======
-		infowindow = new google.maps.InfoWindow();
->>>>>>> FETCH_HEAD
-
+		geo = new google.maps.Geocoder();
+		console.log("Log;map.center = " + map.center);
+		var request = {
+    		    location: map.center,
+     		    radius: 500,
+		    query: 'カレー'
+		};
 		var service = new google.maps.places.PlacesService(map);
 		service.textSearch(request, callbackShop);
 	    }
@@ -141,17 +136,10 @@ function calcRoute(startSpot,endSpot){
     /* ルート描画 */
     directionsService.route(request, function(response, status) {
         if (status==google.maps.DirectionsStatus.OK) {
-<<<<<<< HEAD
             cosole.log(response);
             directionsDisplay.setDirections(response);
         }else{
 	    console.log("Log:google.maps.DirectionsStatus="+status);
-=======
-    	    //            dbg(response);
-            directionsDisplay.setDirections(response);
-        }else{
-    	    //            dbg("status:"+status);
->>>>>>> FETCH_HEAD
         }
     });
 
@@ -175,15 +163,15 @@ function callbackShop(results, status) {
 
     if (status == google.maps.places.PlacesServiceStatus.OK) {
 	var shopnum  =  Math.floor(Math.random() * results.length);
-//	dbg(shopnum);
+	//	dbg(shopnum);
 	// for (var i = 0; i < results.length; i++) {
 	//     place = results[i];
 	//     createMarker(results[i]);
 	// }
-//	createMarker(results[shopnum]);
+	//	createMarker(results[shopnum]);
 
-    endSpot = results[shopnum];
-    calcRoute(startSpot,endSpot);
+	endSpot = results[shopnum];
+	calcRoute(startSpot,endSpot);
     }
     google.maps.event.addListener(directionsDisplay, "directions_changed", function(){
 	computeTotalDistance(directionsDisplay.directions);　//◆総距離合計
